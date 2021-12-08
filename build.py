@@ -74,7 +74,7 @@ def build_rom():
     logger.info("Building main dictionary")
     # Build both dictionaries
     frequency = questions.calculate_word_frequency()
-    main_dict = WordDictionary(questions, frequency, max_size=MAX_MAIN_DICT_SIZE,
+    main_dict = WordDictionary(questions, frequency, max_size=MAX_MAIN_DICT_SIZE, max_word_count=2048,
                                proper=False)
     main_dict.build()
 

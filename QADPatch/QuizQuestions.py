@@ -75,7 +75,7 @@ class QuizQuestion:
             else:
                 out += "%s " % word
                 current_line_length += (len(word) + 1)
-        return out
+        return out.rstrip()
 
 
 class QuestionList:
@@ -148,7 +148,6 @@ class QuestionList:
                 break
             else:
                 output = new_output
-
         # Now encode words from main_dictionary
         while True:
             new_output = self.do_replacement(items=output, d=main_dictionary, proper=False, flip=False)
@@ -156,7 +155,6 @@ class QuestionList:
                 break
             else:
                 output = new_output
-
         # Finally check if we can flip capitalization for any dictionary words
         while True:
             new_output = self.do_replacement(items=output, d=main_dictionary, proper=False, flip=True)
@@ -164,7 +162,6 @@ class QuestionList:
                 break
             else:
                 output = new_output
-
         final_bytes = bytearray()
         for item in output:
             final_bytes.extend(item["data"])
@@ -189,7 +186,7 @@ class QuestionList:
             if replaced:
                 new_items.append(item)
                 continue
-            for w in d.words:
+            for w in sorted(d.words, key=len, reverse=True):
                 word_encoded = w.encode("utf-8")
                 if word_encoded in item["data"]:
                     d_index = d.words.index(w)
@@ -229,7 +226,6 @@ class QuestionList:
 
         byte1 = (mask | d_index >> 8).to_bytes(1, "big")
         byte2 = (d_index - ((d_index >> 8) << 8)).to_bytes(1, "big")
-
         return b''.join([byte1, byte2])
 
     def dump(self, filename, proper_noun_dictionary, main_dictionary):

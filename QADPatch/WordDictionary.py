@@ -1,5 +1,3 @@
-
-
 class WordDictionary:
     """
     Word dictionary used for compressing question text. QAD uses two dictionaries: one for capitalized proper nouns,
@@ -17,8 +15,6 @@ class WordDictionary:
         # self.words except each word's first character's capitalization is flipped. To -> to, the -> The, etc
         self.words_flipped = []
         self.exclusions = exclusions
-
-
 
     def serialize(self):
         """ Generate a bytearray object in the format that the word dictionary will take in the final ROM"""
@@ -57,20 +53,18 @@ class WordDictionary:
 
             # Proper noun dict should only have capitalized words
             if self.proper:
-                if len(self.words) == self.max_word_count:
-                    break
                 if not word[0].isupper() or len(word) < 3:
                     continue
+            if len(self.words) == self.max_word_count:
+                break
 
             if len(self.serialize()) + len(word) + 1 > self.max_size:
                 attempts -= 1
                 continue
-            elif word in [i.lower() for i in self.words]:
+            elif word in self.words or word in self.words_flipped:
                 continue
 
             self.words.append(word)
-        # Generated for all word dictionaries, but this is not used in the proper noun dictionary.
-        for word in self.words:
             if word[0].isupper():
                 flipped = word[0].lower() + word[1:]
             else:
@@ -84,7 +78,7 @@ class WordDictionary:
             # pad if size isn't exactly right.
             pos = f.tell()
             while pos < self.max_size:
-                if self.max_size-pos == 3:
+                if self.max_size - pos == 3:
                     f.write(b'\x02\x61\x62')
                     pos += 3
                 else:

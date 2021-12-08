@@ -1,0 +1,12 @@
+venv/
+.idea/
+__pycache__
+ida/
+clean_rom/qad.zip
+mame/
+patched/qad.zip
+QADPatch/__pycache__
+*.pyc
+*.bat
+notes.txt
+

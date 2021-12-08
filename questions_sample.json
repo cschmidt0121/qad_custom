@@ -1,0 +1,12 @@
+[
+    {
+        "category": "Geography",
+        "question": "What is the capital of Uruguay?",
+        "answers": [
+            "Montevideo",
+            "Asuncion",
+            "Salto",
+            "Santiago"
+        ]
+    }
+]

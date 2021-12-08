@@ -1,0 +1,1 @@
+Put unmodified qad.zip in this directory

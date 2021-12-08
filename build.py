@@ -151,7 +151,6 @@ def build_rom():
     os.remove(join(WORKING_DIR, "rom2.bin"))
     os.remove(join(WORKING_DIR, "combined.bin"))
     build_zip()
-    shutil.copyfile(join(OUTPUT_DIR, "qad.zip"), join(".", "mame", "roms", "qad.zip"))
 
     print(
         f"Build complete. Inserted {dump_metadata['question_count']} questions from {len(dump_metadata['categories'])} categories")

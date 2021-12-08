@@ -150,7 +150,11 @@ def build_rom():
     os.remove(join(WORKING_DIR, "rom1.bin"))
     os.remove(join(WORKING_DIR, "rom2.bin"))
     os.remove(join(WORKING_DIR, "combined.bin"))
+    os.remove(join(WORKING_DIR, "main_dict.bin"))
+    os.remove(join(WORKING_DIR, "proper_noun_dict.bin"))
+    os.remove(join(WORKING_DIR, "questions.bin"))
     build_zip()
+
 
     print(
         f"Build complete. Inserted {dump_metadata['question_count']} questions from {len(dump_metadata['categories'])} categories")

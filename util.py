@@ -55,13 +55,21 @@ def build_zip():
             else:
                 add_dir_to_zip(zf, file)
     os.chdir("..")
-    if os.path.isdir(WORKING_DIR):
-        shutil.rmtree(WORKING_DIR)
-
     if os.path.isdir(OUTPUT_DIR):
         shutil.rmtree(OUTPUT_DIR)
 
     os.mkdir(OUTPUT_DIR)
+
+    # Copy uncompressed raw files to output dir too in order to make IPS patches
+    for fn in [ROM1A, ROM1B, ROM2A, ROM2B]:
+        print("copy ")
+        shutil.copyfile(join(WORKING_DIR, fn), join(OUTPUT_DIR, fn))
+
+    if os.path.isdir(WORKING_DIR):
+        shutil.rmtree(WORKING_DIR)
+
+
+
     shutil.move("temp.zip", join(OUTPUT_DIR, "qad.zip"))
 
 

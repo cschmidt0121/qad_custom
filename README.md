@@ -7,7 +7,7 @@ but questions can be added from any source.
 
 For detailed info on how QaD stores and interprets questions, see [Notes](notes.md).
 
-Requires Python3 and [unidecode](https://pypi.org/project/Unidecode/).
+Requires Python3, [requests](https://docs.python-requests.org/en/latest/index.html), and [unidecode](https://pypi.org/project/Unidecode/).
 
 ## Installation
 

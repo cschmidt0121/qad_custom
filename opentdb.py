@@ -78,7 +78,7 @@ def main():
                     "token": session_token,
                     "category": id,
                     "difficulty": difficulty,
-                    "amount": 50,
+                    "amount": 10,
                     "encode": "url3986",
                     "type": "multiple"
                 }

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3 
 import requests
 import sys
+import time
 import re
 from unidecode import unidecode
 import json
@@ -62,7 +63,11 @@ def fix_str(s, question=False):
 
 def main():
     print("Downloading questions")
-    r = requests.get("https://opentdb.com/api_token.php?command=request")
+    try:
+        r = requests.get("https://opentdb.com/api_token.php?command=request")
+    except requests.ConnectionError as e:
+        print("Cannot connect to OpenTDB API. Wait a few moments and try again.")
+        exit(1)
     session_token = r.json()["token"]
 
     questions = []
@@ -73,22 +78,38 @@ def main():
                     "token": session_token,
                     "category": id,
                     "difficulty": difficulty,
-                    "amount": 50,
+                    "amount": 10,
                     "encode": "url3986",
                     "type": "multiple"
                 }
                 url = "https://opentdb.com/api.php"
-                r = requests.get(url, params=params)
+                try:
+                    r = requests.get(url, params=params)
+                except requests.ConnectionError as e:
+                    print(e)
+                    print("Cannot connect to OpenTDB API. Retrying in 5 seconds.")
+                    time.sleep(5)
+                    continue
                 j = r.json()
                 if j["response_code"] in [1, 2, 3]:
                     sys.exit("Error from OpenTDB: %s" % j["response_message"])
                 elif j["response_code"] == 4:
                     break
+                # If a rate limit is reached, wait 5 seconds before the next request.
+                elif j["response_code"] == 5:
+                    print("API rate limit reached. Waiting 5 seconds.")
+                    time.sleep(5)
+                    continue
                 for question in j["results"]:
                     category = unquote(question["category"])
                     # Category needs to be short
                     category = category.split(":")[-1].strip()
-                    text = fix_str(unquote(question["question"].strip()), question=True)
+                    try:
+                        text = fix_str(unquote(question["question"].strip()), question=True)
+                    except Exception as e:
+                        print(e)
+                        print("Skipping question.")
+                        continue
                     answers = [fix_str(unquote(question["correct_answer"]))]
                     for a in question["incorrect_answers"]:
                         answers.append(fix_str(unquote(a)))
@@ -98,6 +119,9 @@ def main():
                         "answers": answers
                     }
                     questions.append(question_dict)
+                print(f"{len(questions)} questions downloaded.")
+                # As of December 2023, the OpenTDB API limits requests to 1 per IP every 5 seconds.
+                time.sleep(7)
 
     with open("questions.json", "w") as f:
         questions_sorted = sorted(questions, key=lambda q: q['category'])

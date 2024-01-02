@@ -214,6 +214,7 @@ def main():
                         continue
 
                     error = ""
+                    error2 = ""
                     category = unquote(question["category"])
                     # Category needs to be short
                     category = category.split(":")[-1].strip()
@@ -227,9 +228,13 @@ def main():
 
                     answers = [unquote(question["correct_answer"].strip())] + [unquote(i.strip()) for i in question["incorrect_answers"]]
                     if FILTER_INVALID_CHARACTERS_IN_ANSWERS:
-                        error = check_text(answers)
-                        if error != "" and PRINT_INVALID_QUESTIONS:
+                        error2 = check_text(answers)
+                        if error2 != "" and PRINT_INVALID_QUESTIONS:
                             print(f"Warning: In category {category}, question '{text}' has answers with invalid characters.\nAnswers: {answers}")
+                            if error != "":
+                                error += "\n" + error2
+                            else:
+                                error = error2
                     else:
                         answers = [fix_str(i) for i in answers]
 

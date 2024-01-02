@@ -38,8 +38,12 @@ def build_rom():
     logger.setLevel(logging.INFO)
     sh = logging.StreamHandler()
     logger.addHandler(sh)
-    if not check_zip_hash(CLEAN_ROM_DIR, ZIP_FILENAME):
-        logger.error("qad.zip file hash does not match. Make sure you're using the most recent version of qad.zip")
+    try:
+        if not check_zip_hash(CLEAN_ROM_DIR, ZIP_FILENAME):
+            logger.error("qad.zip file hash does not match. Make sure you're using the most recent version of qad.zip")
+            sys.exit(1)
+    except FileNotFoundError:
+        logger.error("qad.zip not found in clean_rom directory.")
         sys.exit(1)
     logger.info("Extracting, deinterleaving, and combining ROM files")
     extract_zip(CLEAN_ROM_DIR, ZIP_FILENAME)

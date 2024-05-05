@@ -62,7 +62,6 @@ def build_zip():
 
     # Copy uncompressed raw files to output dir too in order to make IPS patches
     for fn in [ROM1A, ROM1B, ROM2A, ROM2B]:
-        print("copy ")
         shutil.copyfile(join(WORKING_DIR, fn), join(OUTPUT_DIR, fn))
 
     if os.path.isdir(WORKING_DIR):

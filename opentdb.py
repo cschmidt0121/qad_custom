@@ -36,7 +36,12 @@ Categories by ID:
 31 - Entertainment: Japanese Anime & Manga
 32 - Entertainment: Cartoon & Animations
 '''
-SELECTED_CATEGORY_IDS = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 23, 27]
+SELECTED_CATEGORY_IDS = [9, 10, 11, 12, 14, 15, 16, 17, 18, 20, 22, 23, 27]
+SHORTENED_CATEGORIES = {
+    "General Knowledge": "General",
+    "Science & Nature": "Science",
+    "Television": "TV"
+}
 
 # Request this many questions at a time. This can be set to a lower
 # amount to reduce the chances that newer questions will be excluded,
@@ -112,12 +117,12 @@ def fix_str(s, question=False):
                 index = s.index('"')
                 s = s[0:index] + "{" + s[index+1:]
                 index = s.index('"')
-                s = s[0:index] + " }" + s[index + 1:]
+                s = s[0:index] + "}" + s[index + 1:]
             elif len(ticks) >= 2:
                 index = s.index('`')
                 s = s[0:index] + "{" + s[index+1:]
                 index = s.index('`')
-                s = s[0:index] + " }" + s[index + 1:]
+                s = s[0:index] + "}" + s[index + 1:]
             else:
                 break
     return s
@@ -218,6 +223,9 @@ def main():
                     category = unquote(question["category"])
                     # Category needs to be short
                     category = category.split(":")[-1].strip()
+                    # For some categories, shorten them even more
+                    if category in SHORTENED_CATEGORIES:
+                        category = SHORTENED_CATEGORIES[category]
                     text = unquote(question["question"].strip())
                     if FILTER_INVALID_CHARACTERS_IN_QUESTIONS:
                         error = check_text(text)

@@ -101,6 +101,18 @@ class QuestionList:
                 categories.append(q.category)
 
         return len(categories)
+    
+    def category_names_size(self):
+        """ 
+        Returns the amount of bytes required to store all category names. Used for
+        validation.
+        """
+        categories = []
+        for q in self.question_list:
+            if q.category not in categories:
+                categories.append(q.category)
+
+        return sum(len(category)+1 for category in categories)
 
     def calculate_word_frequency(self):
         """ Given a list of QuizQuestions, return an ordered frequency dict ({"word": <usage count>}) """

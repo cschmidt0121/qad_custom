@@ -61,18 +61,24 @@ def build_rom():
         question_json = json.load(f)
 
     logger.info("Validating questions")
+
     # Validate and add questions
     for q in question_json:
         question = QuizQuestion(category=q["category"],
                                 question_text=q["question"],
                                 answers=q["answers"])
-        logger.info("Question failed validation. Skipping")
+
         valid = question.validate(questions.allowed_chars)
         if valid:
             questions.add_question(question)
+        else:
+            logger.info("Question failed validation. Skipping")
 
     if questions.category_count() > 14:
         logger.error(f"Too many categories. There can be a max of 14. Exiting")
+        sys.exit(1)
+    if questions.category_names_size() > 0x7c:
+        logger.error(f"Total category name length is too long. Remove some categories, or shorten their names. Exiting")
         sys.exit(1)
 
     logger.info("Building main dictionary")
@@ -116,8 +122,8 @@ def build_rom():
         patch("combined.bin", 0x25368 + i, patch_value=(category_id + 1).to_bytes(1, 'big'))
 
     """ Debugging patches for forcing certain categories/questions to be chosen """
-    # patch("combined.bin", 0x5b46, patch_value=b'\x30\x3C\x00\x00') # Always choose category 0
-    # patch("combined.bin", 0x6198, patch_value=b'\x30\x3C\x00\x00') # Always choose question 0 from selected category
+    #patch("combined.bin", 0x5b46, patch_value=b'\x30\x3C\x00\x00') # Always choose category 0
+    #patch("combined.bin", 0x6198, patch_value=b'\x30\x3C\x00\x00') # Always choose question 0 from selected category
 
     current_category_name_offset = 0x1DC1E
     for name, info in dump_metadata["categories"].items():
@@ -151,16 +157,18 @@ def build_rom():
     split('combined.bin', 'rom1.bin', 'rom2.bin', 0x40000)
     interleave("rom1.bin", ROM1A, ROM1B)
     interleave("rom2.bin", ROM2A, ROM2B)
+
     os.remove(join(WORKING_DIR, "rom1.bin"))
     os.remove(join(WORKING_DIR, "rom2.bin"))
     os.remove(join(WORKING_DIR, "combined.bin"))
     os.remove(join(WORKING_DIR, "main_dict.bin"))
     os.remove(join(WORKING_DIR, "proper_noun_dict.bin"))
     os.remove(join(WORKING_DIR, "questions.bin"))
+
     build_zip()
 
 
-    print(
+    logger.info(
         f"Build complete. Inserted {dump_metadata['question_count']} questions from {len(dump_metadata['categories'])} categories")
 
 
